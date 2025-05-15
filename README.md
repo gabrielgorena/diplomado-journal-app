@@ -21,3 +21,4 @@ Start the application with the following command:
 yarn run dev
 # or 
 npm run dev# journal-app
+# journal-app
