@@ -22,3 +22,4 @@ yarn run dev
 # or 
 npm run dev# journal-app
 # journal-app
+# journal-app
