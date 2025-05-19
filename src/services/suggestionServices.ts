@@ -9,6 +9,7 @@ export interface CreateSuggestionResponse {
   suggestions: Suggestion[],
   prompt: string
 }
+
 export const suggestionServices = {
   create: async (prompt: string): Promise<CreateSuggestionResponse> => {
     const response = await api.post('/suggestions', {prompt})
