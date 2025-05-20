@@ -57,7 +57,7 @@ export function App() {
   return (
     <div className="flex h-screen bg-zinc-900 text-white">
       {isSidebarOpen && (
-        <Suspense fallback={<div role="status" aria-live="polite">Loading sidebar...</div>}>
+        <Suspense fallback={null}>
           <Sidebar onClose={() => setIsSidebarOpen(false)} />
         </Suspense>
       )
