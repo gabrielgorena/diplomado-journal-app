@@ -48,7 +48,12 @@ export function App() {
 
       <div className="flex-1 flex flex-col">
         <div className="flex items-center p-4 border-b border-zinc-800">
-          <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="mr-2">
+          <button
+            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+            className="mr-2 p-1 rounded-md hover:bg-zinc-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-900"
+            aria-label={isSidebarOpen ? "Close sidebar" : "Open sidebar"}
+            aria-expanded={isSidebarOpen}
+          >
             {isSidebarOpen ? "←" : "→"}
           </button>
           <h1 className="text-2xl font-medium">Journal App</h1>
@@ -81,15 +86,20 @@ export function App() {
               onChange={(e) => setPrompt(e.target.value)}
               placeholder="Message..."
               className="bg-zinc-800 border-zinc-700 pr-12 focus-visible:ring-green-500"
+              aria-describedby="message-help"
             />
             <Button
               disabled={isLoading}
               type="submit"
               size="icon"
-              className="absolute right-1 top-1 h-8 w-8 bg-green-500 hover:bg-green-600 text-black"
+              className="absolute right-1 top-1 h-8 w-8 bg-green-500 hover:bg-green-600 text-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-800"
+              aria-label="Send message"
             >
               <Send size={16}/>
             </Button>
+            <span id="message-help" className="sr-only">
+              Type your message and press enter to send
+            </span>
           </form>
         </div>
       </div>
