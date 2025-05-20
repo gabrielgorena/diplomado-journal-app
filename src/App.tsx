@@ -84,11 +84,11 @@ export function App() {
                   <p>Loading...</p>
                 </div>
               ) : suggestionsResponse ? (
-                <Suspense fallback={<div role="status" aria-live="polite">Loading suggestions...</div>}>
+                <Suspense fallback={null}>
                   <SuggestionList suggestionsResponse={suggestionsResponse} />
                 </Suspense>
               ) : (
-                <Suspense fallback={<div role="status" aria-live="polite">Loading topics...</div>}>
+                <Suspense fallback={null}>
                   <SuggestionTopics
                     handleSuggestionTopicSelect={(topic) => handleSuggestionTopicSelect(topic)}
                   />
