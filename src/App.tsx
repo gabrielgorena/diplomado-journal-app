@@ -39,7 +39,6 @@ export function App() {
     }
   };
 
-  // Metadatos SEO dinámicos basados en el estado
   const pageTitle = suggestionsResponse
     ? `${suggestionsResponse.prompt} - Journal App`
     : "Journal App - Generador de ideas creativas";
@@ -49,7 +48,6 @@ export function App() {
 
   return (
     <>
-      {/* Metadatos SEO básicos sin dependencias */}
       <head>
         <title>{pageTitle}</title>
         <meta name="description" content={pageDescription} />
@@ -84,7 +82,6 @@ export function App() {
               ) : suggestionsResponse ? (
                 <>
                   <SuggestionList suggestionsResponse={suggestionsResponse} />
-                  {/* Schema Markup para SEO */}
                   <script type="application/ld+json">
                     {JSON.stringify({
                       "@context": "https://schema.org",
