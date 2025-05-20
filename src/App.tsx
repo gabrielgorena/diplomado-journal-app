@@ -1,12 +1,14 @@
-import { useState } from "react";
+import { useState, lazy } from "react";
 import { Send } from "lucide-react";
 import { Button } from "./components/ui/button";
 import { Input } from "./components/ui/input";
-import Sidebar from "./components/Sidebar";
 import { type CreateSuggestionResponse, suggestionServices } from "@/services/suggestionServices.ts";
 import { AxiosError } from "axios";
-import { SuggestionTopics } from "@/components/suggestions/SuggestionTopics.tsx";
-import { SuggestionList } from "@/components/suggestions/SuggestionList.tsx";
+
+const Sidebar = lazy(() => import("./components/Sidebar"));
+const SuggestionTopics = lazy(() => import("@/components/suggestions/SuggestionTopics.tsx"));
+const SuggestionList = lazy(() => import("@/components/suggestions/SuggestionList.tsx"));
+
 
 export function App() {
   const [prompt, setPrompt] = useState("");

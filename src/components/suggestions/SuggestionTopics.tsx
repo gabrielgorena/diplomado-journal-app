@@ -2,7 +2,7 @@
 import SuggestionTopiCard from "@/components/suggestions/SuggestionTopiCard.tsx";
 
 
-export function SuggestionTopics({handleSuggestionTopicSelect}: { handleSuggestionTopicSelect: (topic: string) => void }) {
+function SuggestionTopics({handleSuggestionTopicSelect}: { handleSuggestionTopicSelect: (topic: string) => void }) {
   return (
     <>
       <div className="flex justify-center mb-4">
@@ -52,4 +52,6 @@ export function SuggestionTopics({handleSuggestionTopicSelect}: { handleSuggesti
     </>
   )
 }
+
+export default SuggestionTopics
 

@@ -1,6 +1,6 @@
 import {type CreateSuggestionResponse} from "@/services/suggestionServices.ts";
 
-export function SuggestionList({suggestionsResponse}: { suggestionsResponse: CreateSuggestionResponse }) {
+function SuggestionList({suggestionsResponse}: { suggestionsResponse: CreateSuggestionResponse }) {
   return (
     <>
       <div className="flex justify-center mb-4">
@@ -36,5 +36,7 @@ export function SuggestionList({suggestionsResponse}: { suggestionsResponse: Cre
     </>
   )
 }
+
+export default SuggestionList
 
 
