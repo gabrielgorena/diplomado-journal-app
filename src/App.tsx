@@ -10,21 +10,6 @@ const Sidebar = lazy(() => import("@/components/Sidebar"));
 import {SuggestionTopics} from "@/components/suggestions/SuggestionTopics.tsx";
 import {SuggestionList} from "@/components/suggestions/SuggestionList.tsx";
 
-const preloadComponents = async () => {
-  try {
-    const promises = [
-      import("@/components/Sidebar"),
-      import("@/components/suggestions/SuggestionList.tsx"),
-      import("@/components/suggestions/SuggestionTopics.tsx")
-    ];
-
-    await Promise.all(promises);
-    console.log("Componentes precargados con éxito");
-  } catch (error) {
-    console.error("Error al precargar componentes:", error);
-  }
-};
-
 export function App() {
   const [prompt, setPrompt] = useState("")
   const [suggestionsResponse, setSuggestionsResponse] = useState<CreateSuggestionResponse>()
@@ -32,19 +17,15 @@ export function App() {
   const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
-    preloadComponents();
+    if (!isLoading) {
+      const timer = setTimeout(() => {
+        import("@/components/Sidebar");
+        import("@/components/suggestions/SuggestionList.tsx");
+      }, 2000);
 
-    const sidebarButton = document.querySelector('.sidebar-button');
-    if (sidebarButton) {
-      sidebarButton.addEventListener('mouseenter', preloadComponents);
+      return () => clearTimeout(timer);
     }
-
-    return () => {
-      if (sidebarButton) {
-        sidebarButton.removeEventListener('mouseenter', preloadComponents);
-      }
-    };
-  }, []);
+  }, [isLoading]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
