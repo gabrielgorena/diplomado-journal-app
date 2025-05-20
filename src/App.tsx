@@ -1,19 +1,50 @@
-import {useState} from "react"
+import {useState, Suspense, lazy, useEffect } from "react"
 import {Send} from "lucide-react";
 
 import {Button} from "./components/ui/button"
 import {Input} from "./components/ui/input";
-import Sidebar from "./components/Sidebar"
 import {type CreateSuggestionResponse, suggestionServices} from "@/services/suggestionServices.ts";
 import {AxiosError} from "axios";
+
+const Sidebar = lazy(() => import("@/components/Sidebar"));
 import {SuggestionTopics} from "@/components/suggestions/SuggestionTopics.tsx";
 import {SuggestionList} from "@/components/suggestions/SuggestionList.tsx";
+
+const preloadComponents = async () => {
+  try {
+    const promises = [
+      import("@/components/Sidebar"),
+      import("@/components/suggestions/SuggestionList.tsx"),
+      import("@/components/suggestions/SuggestionTopics.tsx")
+    ];
+
+    await Promise.all(promises);
+    console.log("Componentes precargados con éxito");
+  } catch (error) {
+    console.error("Error al precargar componentes:", error);
+  }
+};
 
 export function App() {
   const [prompt, setPrompt] = useState("")
   const [suggestionsResponse, setSuggestionsResponse] = useState<CreateSuggestionResponse>()
   const [isSidebarOpen, setIsSidebarOpen] = useState(true)
   const [isLoading, setIsLoading] = useState(false)
+
+  useEffect(() => {
+    preloadComponents();
+
+    const sidebarButton = document.querySelector('.sidebar-button');
+    if (sidebarButton) {
+      sidebarButton.addEventListener('mouseenter', preloadComponents);
+    }
+
+    return () => {
+      if (sidebarButton) {
+        sidebarButton.removeEventListener('mouseenter', preloadComponents);
+      }
+    };
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -44,54 +75,74 @@ export function App() {
 
   return (
     <div className="flex h-screen bg-zinc-900 text-white">
-      {isSidebarOpen && <Sidebar onClose={() => setIsSidebarOpen(false)}/>}
+      {isSidebarOpen && (
+        <Suspense fallback={<div role="status" aria-live="polite">Loading sidebar...</div>}>
+          <Sidebar onClose={() => setIsSidebarOpen(false)} />
+        </Suspense>
+      )
+      }
 
       <div className="flex-1 flex flex-col">
-        <div className="flex items-center p-4 border-b border-zinc-800">
-          <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="mr-2">
+        <header className="flex items-center p-4 border-b border-zinc-800">
+          <button
+            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+            className="mr-2 p-1 rounded-md hover:bg-zinc-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-900"
+            aria-label={isSidebarOpen ? "Close sidebar" : "Open sidebar"}
+            aria-expanded={isSidebarOpen}
+          >
             {isSidebarOpen ? "←" : "→"}
           </button>
           <h1 className="text-2xl font-medium">Journal App</h1>
-        </div>
+        </header>
 
-        <div className="flex-1 overflow-auto p-6 flex items-center justify-center">
+        <main className="flex-1 overflow-auto p-6 flex items-center justify-center">
           <div className="max-w-2xl w-full text-center">
             {
-              isLoading ?
-                <div className="flex justify-center mb-4">
+              isLoading ? (
+                <div className="flex justify-center mb-4" role="status" aria-live="polite">
                   <p>Loading...</p>
                 </div>
-
-                :
-                suggestionsResponse ?
-                  <SuggestionList suggestionsResponse={suggestionsResponse}/>
-                  :
+              ) : suggestionsResponse ? (
+                <Suspense fallback={<div role="status" aria-live="polite">Loading suggestions...</div>}>
+                  <SuggestionList suggestionsResponse={suggestionsResponse} />
+                </Suspense>
+              ) : (
+                <Suspense fallback={<div role="status" aria-live="polite">Loading topics...</div>}>
                   <SuggestionTopics
                     handleSuggestionTopicSelect={(topic) => handleSuggestionTopicSelect(topic)}
                   />
+                </Suspense>
+              )
             }
           </div>
-        </div>
+        </main>
 
-        <div className="p-4 border-t border-zinc-800">
+        <footer className="p-4 border-t border-zinc-800">
           <form onSubmit={handleSubmit} className="relative max-w-2xl mx-auto">
+            <label htmlFor="message-input" className="sr-only">Message</label>
             <Input
+              id="message-input"
               disabled={isLoading}
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
               placeholder="Message..."
               className="bg-zinc-800 border-zinc-700 pr-12 focus-visible:ring-green-500"
+              aria-describedby="message-help"
             />
             <Button
               disabled={isLoading}
               type="submit"
               size="icon"
-              className="absolute right-1 top-1 h-8 w-8 bg-green-500 hover:bg-green-600 text-black"
+              className="absolute right-1 top-1 h-8 w-8 bg-green-500 hover:bg-green-600 text-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-800"
+              aria-label="Send message"
             >
-              <Send size={16}/>
+              <Send size={16} aria-hidden="true"/>
             </Button>
+            <span id="message-help" className="sr-only">
+              Type your message and press enter to send
+            </span>
           </form>
-        </div>
+        </footer>
       </div>
     </div>
   )
